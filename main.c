@@ -85,6 +85,7 @@
 #define TKErroConstFloat 101
 #define TKErroOU 102
 #define TKErroAND 103
+#define TKErroConstHexa 104
 
 #include <string.h>
 #include <stdio.h>
@@ -521,6 +522,7 @@ int le_token(char st[],char lex[])
                 if (c == 'x' || c == 'X'){
                     pos++;
                     estado = 9;
+                    estado_anterior = 8;
                     break;
                 }
                 lex[--posl]='\0';
@@ -528,7 +530,12 @@ int le_token(char st[],char lex[])
             case 9:
                 if (c>='0' && c<='9'){
                     pos++;
+                    estado_anterior = 9;
                     break;
+                }
+                else{
+                    if (estado_anterior == 8)
+                        return TKErroConstHexa;
                 }
                 lex[--posl]='\0';
                 return TKConstHexa;
@@ -600,6 +607,18 @@ int main()
         }
         if(tk == 101){
             fputs("TKErroConstFloat: Erro no uso do '.' na Linha: ",saida);
+            for (i = 0;i < strlen(linhaSt);i++) {
+                fputc(linhaSt[i], saida);
+            }
+            fputs(" Coluna: ",saida);
+            for (i = 0;i < strlen(colunaSt);i++) {
+                fputc(colunaSt[i],saida);
+            }
+            fputs(" !!!",saida);
+            break;
+        }
+        if(tk == 104){
+            fputs("TKErroConstHexa: Erro no uso da variável hexadecimal na Linha: ",saida);
             for (i = 0;i < strlen(linhaSt);i++) {
                 fputc(linhaSt[i], saida);
             }
