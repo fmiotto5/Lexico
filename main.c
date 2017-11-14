@@ -1,5 +1,5 @@
 #define TKId 1
-//test
+//testee
 
 //PALAVRAS RESERVADAS
 #define TKVoid 2
