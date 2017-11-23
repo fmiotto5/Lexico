@@ -7,6 +7,7 @@
 #define TKLong 5
 #define TKFloat 6
 #define TKDouble 7
+#define TKChar 69
 #define TKAsm 8
 #define TKAuto 9
 #define TKBreak 10
