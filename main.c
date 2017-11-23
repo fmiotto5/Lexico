@@ -7,7 +7,6 @@
 #define TKLong 5
 #define TKFloat 6
 #define TKDouble 7
-#define TKChar 69
 #define TKAsm 8
 #define TKAuto 9
 #define TKBreak 10
@@ -91,7 +90,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-int pos = 0;
+        int pos = 0;
 int estado_anterior = 0;
 int posColuna = 0;
 int subColuna = 0;
@@ -553,7 +552,7 @@ int main()
 
     int i = 0;
 
-    /* /home/felipe/Área de Trabalho/entrada/entrada */
+                               /* /home/felipe/Área de Trabalho/entrada/entrada */
     if ((entrada = fopen("/home/canu/carvi/cent/csin/fmiotto5/Área de Trabalho/entrada", "r")) == NULL) {
         printf("Arquivo não pode ser aberto\n");
         exit(1);
