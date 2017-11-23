@@ -7,6 +7,7 @@
 #define TKLong 5
 #define TKFloat 6
 #define TKDouble 7
+#define TKChar 69
 #define TKAsm 8
 #define TKAuto 9
 #define TKBreak 10
@@ -85,11 +86,12 @@
 #define TKErroConstFloat 101
 #define TKErroOU 102
 #define TKErroAND 103
+#define TKErroConstHexa 104
 
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-        int pos = 0;
+int pos = 0;
 int estado_anterior = 0;
 int posColuna = 0;
 int subColuna = 0;
@@ -164,6 +166,12 @@ int le_token(char st[],char lex[])
                     break;
                 }
                 if (c>='0' && c<='9'){
+                    if (c == '0'){
+                        pos++;
+                        estado = 8;
+                        estado_anterior = 0;
+                        break;
+                    }
                     pos++;
                     estado=2;
                     estado_anterior = 0;
@@ -431,10 +439,12 @@ int le_token(char st[],char lex[])
                 estado_anterior = 1;
                 return palavra_reservada(lex);
 
-            case 2:if (c>='0' && c<='9'){ //JA FOI LIDO UM NUMERO ANTERIORMENTE OU UM SINAL
+            case 2:
+                if (c>='0' && c<='9'){ //JA FOI LIDO UM NUMERO ANTERIORMENTE OU UM SINAL
                     pos++;
                     break;
                 }
+
                 if (c=='.') {
                     pos++;
                     estado=3;
@@ -505,6 +515,31 @@ int le_token(char st[],char lex[])
                 lex[--posl]='\0';
                 estado_anterior = 7;
                 return TKConstFloat;
+            case 8:
+                if (c>='0' && c<='9'){
+                    pos++;
+                    break;
+                }
+                if (c == 'x' || c == 'X'){
+                    pos++;
+                    estado = 9;
+                    estado_anterior = 8;
+                    break;
+                }
+                lex[--posl]='\0';
+                return TKConstOctal;
+            case 9:
+                if (c>='0' && c<='9'){
+                    pos++;
+                    estado_anterior = 9;
+                    break;
+                }
+                else{
+                    if (estado_anterior == 8)
+                        return TKErroConstHexa;
+                }
+                lex[--posl]='\0';
+                return TKConstHexa;
         }
     }
 }
@@ -518,7 +553,8 @@ int main()
 
     int i = 0;
 
-    if ((entrada = fopen("/home/felipe/Área de Trabalho/entrada", "r")) == NULL) {
+    /* /home/felipe/Área de Trabalho/entrada/entrada */
+    if ((entrada = fopen("/home/canu/carvi/cent/csin/fmiotto5/Área de Trabalho/entrada", "r")) == NULL) {
         printf("Arquivo não pode ser aberto\n");
         exit(1);
     }
@@ -539,7 +575,7 @@ int main()
     }
     exp1[i] = '\0';
 
-    if ((saida = fopen("/home/felipe/Área de Trabalho/saida", "w")) == NULL) {
+    if ((saida = fopen("/home/canu/carvi/cent/csin/fmiotto5/Área de Trabalho/saida", "w")) == NULL) {
         printf("Arquivo  dest não pode ser aberto\n");
         exit(1);
     }
@@ -572,6 +608,18 @@ int main()
         }
         if(tk == 101){
             fputs("TKErroConstFloat: Erro no uso do '.' na Linha: ",saida);
+            for (i = 0;i < strlen(linhaSt);i++) {
+                fputc(linhaSt[i], saida);
+            }
+            fputs(" Coluna: ",saida);
+            for (i = 0;i < strlen(colunaSt);i++) {
+                fputc(colunaSt[i],saida);
+            }
+            fputs(" !!!",saida);
+            break;
+        }
+        if(tk == 104){
+            fputs("TKErroConstHexa: Erro no uso da variável hexadecimal na Linha: ",saida);
             for (i = 0;i < strlen(linhaSt);i++) {
                 fputc(linhaSt[i], saida);
             }
